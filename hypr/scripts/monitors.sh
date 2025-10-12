@@ -13,11 +13,3 @@ handle_monitors() {
 
 
 handle_monitors
-
-
-socat -u UNIX-CONNECT:/tmp/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock - | \
-while read -r line; do
-    if echo "$line" | grep -E "monitoradded|monitorremoved"; then
-        handle_monitors
-    fi
-done
