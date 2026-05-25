@@ -29,6 +29,7 @@
       "7": "7",
       "8": "8",
       "9": "9",
+      "10": "0",
       //"active": "󱓻"
     },
     // "persistent-workspaces": {
@@ -55,15 +56,22 @@
     "critical": 90
   },
 
+  "custom/weather": {
+    "exec": "$OMARCHY_PATH/default/waybar/weather.sh",
+    "return-type": "json",
+    "interval": 60,
+    "tooltip": false,
+    "on-click": "notify-send -u low \"$(omarchy-weather-status)\""
+  },
   "network": {
-    "interval": 3,
+    "interval": 5,
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
     "format": "{icon}",
     "format-wifi": "{icon}",
     "format-ethernet": "󰀂",
     "format-disconnected": "󰤮",
-    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)",
+    "tooltip-format-ethernet": "Connected",
     "tooltip-format-disconnected": "Disconnected",
     "on-click": "~/.config/waybar/scripts/network.sh"
   },
@@ -82,6 +90,31 @@
     "max-length": 35
   },
 
+  "custom/voxtype": {
+    "exec": "omarchy-voxtype-status",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": {
+      "idle": "",
+      "recording": "󰍬",
+      "transcribing": "󰔟"
+    },
+    "tooltip": true,
+    "on-click-right": "omarchy-voxtype-config",
+    "on-click": "omarchy-voxtype-model"
+  },
+  "custom/idle-indicator": {
+    "on-click": "omarchy-toggle-idle",
+    "exec": "$OMARCHY_PATH/default/waybar/indicators/idle.sh",
+    "signal": 9,
+    "return-type": "json"
+  },
+  "custom/notification-silencing-indicator": {
+    "on-click": "omarchy-toggle-notification-silencing",
+    "exec": "$OMARCHY_PATH/default/waybar/indicators/notification-silencing.sh",
+    "signal": 10,
+    "return-type": "json"
+  },
   "tray": {
     "icon-size": 16,
     "spacing": 6
@@ -99,12 +132,14 @@
 
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "$TERMINAL --class=Wiremix -e wiremix",
+    "on-click": "omarchy-launch-audio",
     "on-click-right": "pamixer -t",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
     "format-muted": "",
     "format-icons": {
+      "headphone": "",
+      "headset": "",
       "default": ["", "", ""]
     }
   },
@@ -130,6 +165,7 @@
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
     "on-click": "omarchy-menu power",
+    "on-click-right": "notify-send -u low \"$(omarchy-battery-status)\"",
     "states": {
       "warning": 20,
       "critical": 10
@@ -138,8 +174,8 @@
 
   "clock": {
     "format": "{:L%A %H:%M}",
-    "format-alt": "{:L%d %B %Y}",
+    "format-alt": "{:L%d-%m-%Y %H:%M}",
     "tooltip": false,
-    "on-click-right": "omarchy-cmd-tzupdate"
+    "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
   }
 }
