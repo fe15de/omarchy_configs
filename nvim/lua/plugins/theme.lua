@@ -1,0 +1,1 @@
+/home/fede/.config/omarchy/current/theme/neovim.lua
