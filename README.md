@@ -32,7 +32,9 @@ changes are copied between the live location and this repo by hand (or with the
   the `omarchy_monitor_scale` / `omarchy_gdk_scale` knobs.
 - `input.lua`, `looknfeel.lua`, `autostart.lua` — input, gaps/borders/animations,
   startup execs.
-- `hyprlock.conf` — lock screen (the `fede.lock` plugin also draws on this).
+- `hyprlock.conf` — hyprlock settings. The active lock screen is now the
+  `fede.lock` Quickshell plugin (see [`omarchy/`](#omarchy)), which still pulls
+  its wallpaper from `imgs/`.
 - `imgs/` — wallpapers and lock-screen images.
 - `scripts/`
   - `projection-menu.sh` — applies a display mode (see [Project menu](#project--winp-display-switcher)).
@@ -50,15 +52,25 @@ changes are copied between the live location and this repo by hand (or with the
     sub-options under Extend).
   - `menu.sh` — legacy bash-menu overrides (mostly unused now).
 - `plugins/` — custom shell plugins, all **clones of stock Omarchy plugins**
-  (prefix `fede.`) so they survive `omarchy update`:
+  (prefix `fede.`) so they survive `omarchy update`. Each plugin dir has a
+  `preview.png`:
   - `fede.clock` — Google Calendar in the bar. Ships its own `sync/` (a
     `gws`-based poller + `systemd` user timer); see [Calendar sync](#calendar-sync).
   - `fede.monitor` — clone of `omarchy.monitor` (the Display panel). Patched so
     disabling the laptop panel writes Omarchy's persistent
     `internal-monitor-disable` flag instead of a runtime-only `hyprctl` call,
     so it stays off across reloads and the clamshell reconciler.
-  - `fede.audio`, `fede.menu`, `fede.lock`, `fede.workspaces` — styling / behaviour
-    tweaks over their stock counterparts.
+  - `fede.lock` — clone of `omarchy.lock`, with `LockView.qml` fully
+    redesigned. One left-aligned column: an oversized SF Pro Display clock, an
+    accent hairline, the date in tracked uppercase, then a borderless password
+    field that is just an underline (accent on focus, red + shake on a failed
+    attempt, a pulse while checking). The wallpaper
+    (`~/.config/hypr/imgs/wallpaper.jpg`) is kept but graded down under neutral
+    scrims. Every dimension is a fraction of the surface, so the layout holds
+    at any resolution; the PAM / fingerprint plumbing and the `Service.qml`
+    contract are untouched.
+  - `fede.audio`, `fede.menu`, `fede.workspaces` — styling / behaviour tweaks
+    over their stock counterparts.
 - `bar/ram_usage.bash` — command widget shown in the bar.
 - `branding/` — `about.txt`, `screensaver.txt`.
 - `backgrounds/`, `themed/`, `themes/` — theme assets. `themes/*` are **symlinks**
