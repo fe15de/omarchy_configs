@@ -1,5 +1,5 @@
 -- Application bindings
-o.bind("SUPER + ALT + RETURN", "Tmux", 'uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)" tmux new')
+-- o.bind("SUPER + ALT + RETURN", "Tmux", 'uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)" tmux new')
 
 -- o.bind("SUPER + RETURN", "Terminal", 'uwsm app -- $TERMINAL --dir="$(omarchy-cmd-terminal-cwd)"')
 -- o.bind("SUPER + SHIFT + F", "File manager", "uwsm app -- nautilus --new-window")

@@ -27,6 +27,18 @@ Panel {
   property var displays: []
   property int enabledDisplayCount: 0
 
+  // Resolution + orientation for the focused monitor. Read from `hyprctl
+  // monitors -j`; applied and persisted by bin/fede-monitor-geometry, which
+  // writes a per-monitor hl.monitor() line that keeps `scale =
+  // omarchy_monitor_scale` so the SCALE pills stay the sole owner of scale.
+  property var focusedModes: []
+  property string focusedModeString: ""
+  property int focusedTransform: 0
+  readonly property string geomScript: Qt.resolvedUrl("bin/fede-monitor-geometry").toString().replace("file://", "")
+  readonly property var transformOptions: [
+    { "t": 0, "l": "0°" }, { "t": 1, "l": "90°" }, { "t": 2, "l": "180°" }, { "t": 3, "l": "270°" }
+  ]
+
   // Carry sub-notch touchpad deltas between wheel events.
   property real wheelAccumulator: 0
 
@@ -231,7 +243,10 @@ Panel {
 
   function refresh() {
     if (!stateProc.running) stateProc.running = true
+    if (!geomProc.running) geomProc.running = true
   }
+
+  onFocusedMonitorChanged: if (!geomProc.running) geomProc.running = true
 
   function setBrightness(value) {
     var percent = Model.clampBrightness(value)
@@ -321,6 +336,18 @@ Panel {
     if (!actionProc.running) actionProc.running = true
   }
 
+  function setMode(mode) {
+    if (!root.focusedMonitor || !mode) return
+    actionProc.command = ["bash", root.geomScript, "set", root.focusedMonitor, "--mode", String(mode)]
+    if (!actionProc.running) actionProc.running = true
+  }
+
+  function setTransform(t) {
+    if (!root.focusedMonitor) return
+    actionProc.command = ["bash", root.geomScript, "set", root.focusedMonitor, "--transform", String(t)]
+    if (!actionProc.running) actionProc.running = true
+  }
+
   // ---- Text size (shell base font + GTK text-scaling, via one CLI) ----
   function nearestTextStop(px) {
     var best = 0
@@ -393,6 +420,56 @@ Panel {
     running: root.opened
     repeat: true
     onTriggered: root.refresh()
+  }
+
+  // Focused monitor's available modes + current transform, for the RESOLUTION
+  // and ORIENTATION sections. Kept separate from omarchy-monitor-state, which
+  // does not report modes.
+  Process {
+    id: geomProc
+    command: ["bash", "-c", "hyprctl monitors -j"]
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: {
+        try {
+          var arr = JSON.parse(String(text || "[]"))
+          var m = null
+          for (var i = 0; i < arr.length; i++) {
+            if (arr[i].name === root.focusedMonitor) { m = arr[i]; break }
+            if (!m && arr[i].focused) m = arr[i]
+          }
+          if (!m) {
+            root.focusedModes = []
+            root.focusedModeString = ""
+            root.focusedTransform = 0
+            return
+          }
+          var src = Array.isArray(m.availableModes) ? m.availableModes
+                  : (Array.isArray(m.modes)
+                     ? m.modes.map(function(r) { return r.width + "x" + r.height + "@" + r.refreshRate })
+                     : [])
+          var modes = []
+          var seen = ({})
+          for (var k = 0; k < src.length; k++) {
+            var s = String(src[k])
+            if (s && !seen[s]) { seen[s] = true; modes.push(s) }
+          }
+          root.focusedModes = modes
+          root.focusedTransform = Number(m.transform) || 0
+
+          var cw = m.width + "x" + m.height
+          var cur = Number(m.refreshRate)
+          var best = "", bestDiff = 1e9
+          for (var j = 0; j < modes.length; j++) {
+            var at = modes[j].indexOf("@")
+            if (at < 0 || modes[j].slice(0, at) !== cw) continue
+            var diff = Math.abs(parseFloat(modes[j].slice(at + 1)) - cur)
+            if (diff < bestDiff) { bestDiff = diff; best = modes[j] }
+          }
+          root.focusedModeString = best || (cw + "@" + cur.toFixed(2) + "Hz")
+        } catch (e) { /* ignore parse errors */ }
+      }
+    }
   }
 
   Process {
@@ -792,6 +869,66 @@ Panel {
                   scaleValue: modelData
                   scaleIndex: index
                   width: scaleRow.cellWidth
+                }
+              }
+            }
+          }
+
+          // ---------- Resolution ----------
+          PanelSeparator { foreground: root.bar.foreground }
+
+          Column {
+            width: parent.width
+            spacing: Style.space(10)
+            visible: root.focusedModes.length > 0
+
+            PanelSectionHeader {
+              text: "RESOLUTION"
+              foreground: root.bar.foreground
+              fontFamily: root.bar.fontFamily
+            }
+
+            SearchableDropdown {
+              width: parent.width
+              foreground: root.bar.foreground
+              fontFamily: root.bar.fontFamily
+              showLabel: false
+              placeholderText: "Search resolutions…"
+              value: root.focusedModeString
+              options: root.focusedModes
+              onChanged: function(v) { if (v && v !== root.focusedModeString) root.setMode(v) }
+            }
+          }
+
+          // ---------- Orientation ----------
+          PanelSeparator { foreground: root.bar.foreground }
+
+          Column {
+            width: parent.width
+            spacing: Style.space(10)
+
+            PanelSectionHeader {
+              text: "ORIENTATION"
+              foreground: root.bar.foreground
+              fontFamily: root.bar.fontFamily
+            }
+
+            Row {
+              width: parent.width
+              spacing: Style.spacing.xs
+
+              Repeater {
+                model: root.transformOptions
+
+                Button {
+                  required property var modelData
+                  text: modelData.l
+                  foreground: root.bar.foreground
+                  fontFamily: root.bar.fontFamily
+                  fontSize: Style.font.caption
+                  bordered: true
+                  active: root.focusedTransform === modelData.t
+                  onClicked: root.setTransform(modelData.t)
                 }
               }
             }

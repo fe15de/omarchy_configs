@@ -1,0 +1,78 @@
+#!/bin/bash
+# Per-monitor resolution and orientation for the fede.monitor bar widget.
+#
+# Applies the change live via `hyprctl` and upserts a matching hl.monitor()
+# line in ~/.config/hypr/monitors.lua so it survives a reboot. The persisted
+# line references the `omarchy_monitor_scale` *variable* (not a literal), so
+# scale stays owned by the SCALE pills / `omarchy-hyprland-monitor-scaling` —
+# this widget never becomes a second source of truth for scale.
+#
+# Usage: fede-monitor-geometry set <output> [--mode WxH@R] [--transform 0-3]
+
+set -euo pipefail
+
+MONITORS_LUA="$HOME/.config/hypr/monitors.lua"
+
+validate_output()    { [[ $1 =~ ^[A-Za-z0-9_-]+(:[A-Za-z0-9_-]+)?$ ]] || { echo "bad output: $1" >&2; exit 1; }; }
+validate_mode()      { [[ $1 =~ ^[0-9]+x[0-9]+@[0-9]+(\.[0-9]+)?(Hz)?$ ]] || { echo "bad mode: $1" >&2; exit 1; }; }
+validate_transform() { [[ $1 =~ ^[0-3]$ ]] || { echo "bad transform: $1" >&2; exit 1; }; }
+lua_escape()         { printf '%s' "$1" | sed 's/[\\"]/\\&/g'; }
+
+monitor_json() { hyprctl monitors -j 2>/dev/null | jq -c --arg n "$1" '.[] | select(.name == $n)'; }
+
+persist_to_lua() {
+  local output="$1" mode="$2" transform="$3" scale_expr="$4"
+  [[ -f $MONITORS_LUA ]] || return 0
+  local so sm line tmp
+  so="$(lua_escape "$output")"; sm="$(lua_escape "$mode")"
+  line="hl.monitor({ output = \"$so\", mode = \"$sm\", position = \"auto\", scale = $scale_expr, transform = $transform })"
+  if grep -Eq "^hl\.monitor\(\{ output = \"$so\"" "$MONITORS_LUA"; then
+    tmp="$(mktemp)"
+    awk -v out="$so" -v repl="$line" '
+      $0 ~ "^hl\\.monitor\\(\\{ output = \"" out "\"" { print repl; next } { print }
+    ' "$MONITORS_LUA" >"$tmp"
+    mv "$tmp" "$MONITORS_LUA"
+  else
+    printf '\n%s\n' "$line" >>"$MONITORS_LUA"
+  fi
+}
+
+[[ ${1:-} == set ]] || { echo "usage: fede-monitor-geometry set <output> [--mode WxH@R] [--transform 0-3]" >&2; exit 1; }
+shift
+output="${1:-}"; shift || true
+[[ -n $output ]] || { echo "missing <output>" >&2; exit 1; }
+validate_output "$output"
+
+m="$(monitor_json "$output")"
+[[ -n $m ]] || { echo "monitor '$output' not found" >&2; exit 1; }
+
+mode="$(jq -r '"\(.width)x\(.height)@\(.refreshRate)"' <<<"$m")"
+transform="$(jq -r '.transform' <<<"$m")"
+scale="$(jq -r '.scale' <<<"$m")"
+
+while (( $# > 0 )); do
+  case "$1" in
+    --mode)      mode="$2"; shift 2 ;;
+    --transform) transform="$2"; shift 2 ;;
+    *) echo "unknown arg: $1" >&2; exit 1 ;;
+  esac
+done
+validate_mode "$mode"
+validate_transform "$transform"
+
+# Live apply — carry the current scale so Hyprland doesn't reset it to 1.
+so="$(lua_escape "$output")"; sm="$(lua_escape "$mode")"
+if ! out="$(hyprctl eval "hl.monitor({ output = \"$so\", mode = \"$sm\", position = \"auto\", scale = $scale, transform = $transform })" 2>&1)"; then
+  echo "live apply failed: $out" >&2
+  exit 1
+fi
+
+# Persist. Prefer the shared variable so the SCALE pills keep sole ownership of
+# scale; fall back to the literal only if the variable isn't declared.
+if grep -q '^local omarchy_monitor_scale = ' "$MONITORS_LUA" 2>/dev/null; then
+  persist_to_lua "$output" "$mode" "$transform" "omarchy_monitor_scale"
+else
+  persist_to_lua "$output" "$mode" "$transform" "$scale"
+fi
+
+echo "applied $output: mode=$mode transform=$transform"

@@ -23,8 +23,19 @@ source "$OMARCHY_PATH/default/bash/rc"
 . "$HOME/.cargo/env"
 
 export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Omarchy runs interactive shells with `set +h` (command hashing off, for mise).
+# nvm runs `hash -r` internally, which then prints "bash: hash: hashing disabled".
+# Turn hashing on only while nvm loads/runs, then restore Omarchy's setting.
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  set -h
+  \. "$NVM_DIR/nvm.sh"  # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # nvm bash completion
+  if declare -f nvm >/dev/null; then
+    eval "$(declare -f nvm | sed '1s/^nvm ()/__nvm_real ()/')"
+    nvm() { set -h; __nvm_real "$@"; local r=$?; set +h; return "$r"; }
+  fi
+  set +h
+fi
 
 # pnpm
 export PNPM_HOME="/home/fede/.local/share/pnpm"
