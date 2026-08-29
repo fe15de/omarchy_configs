@@ -13,6 +13,7 @@ o.bind("SUPER + SHIFT + M", "WhatsApp", 'omarchy-launch-or-focus-webapp WhatsApp
 o.bind("SUPER + SHIFT + N", "Obsidian", 'omarchy-launch-or-focus obsidian "uwsm-app -- obsidian"')
 hl.unbind("SUPER + SHIFT + P")
 o.bind("SUPER + SHIFT + P", "HDMI connected", "bash ~/.config/hypr/scripts/monitors.sh")
+o.bind("SUPER + ALT + P", "Project (display mode)", 'omarchy-shell shell toggle fede.menu \'{"menu":"projection"}\'')
 o.bind("SUPER + SHIFT + SLASH", "Passwords", "uwsm app -- 1password")
 
 o.bind("SUPER + SHIFT + S", "Toggle scratchpad", hl.dsp.workspace.toggle_special("scratchpad"))

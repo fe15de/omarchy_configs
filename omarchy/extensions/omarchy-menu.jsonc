@@ -27,4 +27,16 @@
   // Example: replace the default About action by reusing the same id. Existing
   // fields are kept unless overridden.
   // "about": {"icon":"","label":"About","action":"omarchy-launch-or-focus-tui \"zsh -c 'fastfetch; read -k 1'\""},
+
+  // Project (Win+P style display-mode switcher). SUPER+ALT+P opens this route.
+  "projection": {"icon":"󰍹","label":"Project","aliases":["project","display-mode","screen-mode"]},
+  "projection.extend": {"icon":"󰍺","label":"Extend","description":"Laptop and external as separate screens","checked":"! test -f $HOME/.local/state/omarchy/toggles/hypr/internal-monitor-mirror.lua && ! test -f $HOME/.local/state/omarchy/toggles/hypr/internal-monitor-disable.lua && ! test -f $HOME/.local/state/omarchy/toggles/hypr/projection-external-disable.lua"},
+  "projection.extend.auto": {"icon":"󰑖","label":"Automatic position","checked":"! test -f $HOME/.local/state/omarchy/toggles/hypr/projection-layout.lua","action":"bash $HOME/.config/hypr/scripts/projection-menu.sh extend"},
+  "projection.extend.right": {"icon":"󰍹","label":"External on the right","checked":"[[ $(cat $HOME/.local/state/omarchy/projection-layout 2>/dev/null) == right ]]","action":"bash $HOME/.config/hypr/scripts/projection-menu.sh extend right"},
+  "projection.extend.left": {"icon":"󰍹","label":"External on the left","checked":"[[ $(cat $HOME/.local/state/omarchy/projection-layout 2>/dev/null) == left ]]","action":"bash $HOME/.config/hypr/scripts/projection-menu.sh extend left"},
+  "projection.extend.up": {"icon":"󰍹","label":"External above","checked":"[[ $(cat $HOME/.local/state/omarchy/projection-layout 2>/dev/null) == up ]]","action":"bash $HOME/.config/hypr/scripts/projection-menu.sh extend up"},
+  "projection.extend.down": {"icon":"󰍹","label":"External below","checked":"[[ $(cat $HOME/.local/state/omarchy/projection-layout 2>/dev/null) == down ]]","action":"bash $HOME/.config/hypr/scripts/projection-menu.sh extend down"},
+  "projection.duplicate": {"icon":"󰍹","label":"Duplicate","description":"Mirror the laptop screen onto the external","checked":"test -f $HOME/.local/state/omarchy/toggles/hypr/internal-monitor-mirror.lua","action":"bash $HOME/.config/hypr/scripts/projection-menu.sh duplicate"},
+  "projection.external": {"icon":"󰍹","label":"External screen only","description":"Turn the laptop display off","checked":"test -f $HOME/.local/state/omarchy/toggles/hypr/internal-monitor-disable.lua","action":"bash $HOME/.config/hypr/scripts/projection-menu.sh external"},
+  "projection.laptop": {"icon":"󰛧","label":"Laptop screen only","description":"Turn the external display(s) off","checked":"test -f $HOME/.local/state/omarchy/toggles/hypr/projection-external-disable.lua","action":"bash $HOME/.config/hypr/scripts/projection-menu.sh laptop"},
 }

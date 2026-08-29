@@ -2,9 +2,10 @@
   "schemaVersion": 1,
   "id": "fede.clock",
   "name": "My Clock",
-  "version": "1.0.0",
-  "author": "Omarchy",
-  "description": "Date/time label with a calendar popup",
+  "version": "0.2.1",
+  "author": "tmn73",
+  "license": "MIT",
+  "description": "Your Google Calendar in the bar. Your next meeting at a glance, and one click to join it.",
   "kinds": [
     "bar-widget"
   ],
@@ -13,11 +14,48 @@
   },
   "barWidget": {
     "displayName": "My Clock",
-    "description": "Date/time label with a calendar popup",
+    "description": "Your Google Calendar in the bar. Your next meeting at a glance, and one click to join it.",
     "category": "Time",
-    "allowMultiple": false
+    "allowMultiple": false,
+    "defaults": {
+      "format": "dddd HH:mm",
+      "formatAlt": "",
+      "verticalFormat": "HH\n-\nmm"
+    },
+    "schema": [
+      {
+        "key": "format",
+        "type": "string",
+        "label": "Date format",
+        "defaultValue": "dddd HH:mm"
+      },
+      {
+        "key": "formatAlt",
+        "type": "string",
+        "label": "Alternate format",
+        "defaultValue": ""
+      },
+      {
+        "key": "verticalFormat",
+        "type": "string",
+        "label": "Vertical bar format",
+        "defaultValue": "HH\n-\nmm"
+      },
+      {
+        "key": "birthYear",
+        "type": "number",
+        "label": "Birth year",
+        "defaultValue": 0
+      },
+      {
+        "key": "lifeExpectancy",
+        "type": "number",
+        "label": "Life expectancy",
+        "defaultValue": 0
+      }
+    ]
   },
   "omarchy": {
-    "clonedFrom": "omarchy.clock"
+    "forkedFrom": "tmn73.calendar (https://github.com/tmn73/omarchy-calendar)"
   }
 }

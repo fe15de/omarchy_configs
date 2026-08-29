@@ -1,43 +1,19 @@
 {
-  "version": 1,
-  "idle": {
-    "lock": 300
-  },
   "bar": {
-    "position": "top",
-    "transparent": true,
-    "centerAnchor": "omarchy.clock",
+    "centerAnchor": "fede.workspaces",
     "layout": {
       "center": [
         {
           "id": "fede.workspaces"
         }
       ],
-      "right": [
-        {
-          "id": "omarchy.indicators"
-        },
-        {
-          "id": "omarchy.power"
-        },
-        {
-          "id": "fede.clock",
-          "format": "dddd HH:mm"
-        },
-        {
-          "id": "omarchy.keyboard-layout"
-        },
-        {
-          "id": "omarchy.system-update"
-        }
-      ],
       "left": [
         {
-          "id": "ram",
-          "type": "command",
           "exec": "~/.config/omarchy/bar/ram_usage.bash",
+          "fontSize": 11,
+          "id": "ram",
           "interval": 30,
-          "fontSize": 11
+          "type": "command"
         },
         {
           "id": "omarchy.tray"
@@ -52,18 +28,54 @@
           "id": "omarchy.network"
         },
         {
-          "id": "omarchy.audio"
+          "id": "fede.audio"
         },
         {
-          "id": "omarchy.monitor"
+          "id": "fede.monitor"
+        }
+      ],
+      "right": [
+        {
+          "id": "omarchy.indicators",
+          "items": [
+            "StayAwake"
+          ]
         },
         {
-          "id": "omarchy.weather"
+          "id": "omarchy.power"
+        },
+        {
+          "id": "fede.clock",
+          "format": "dddd HH:mm",
+          "hiddenCalendars": [],
+          "weekStartDay": "monday"
+        },
+        {
+          "id": "omarchy.keyboard-layout"
+        },
+        {
+          "id": "omarchy.system-update"
         }
       ]
-    }
+    },
+    "position": "top",
+    "transparent": true
+  },
+  "cloneSourceRestores": [
+    "fede.menu",
+    "fede.lock"
+  ],
+  "disabledPlugins": [
+    "omarchy.menu",
+    "omarchy.lock"
+  ],
+  "idle": {
+    "lock": 300
   },
   "plugins": [
+    {
+      "id": "fede.audio"
+    },
     {
       "id": "fede.menu"
     },
@@ -71,14 +83,5 @@
       "id": "fede.lock"
     }
   ],
-  "disabledPlugins": [
-    "omarchy.menu",
-    "omarchy.clock",
-    "omarchy.lock"
-  ],
-  "cloneSourceRestores": [
-    "fede.menu",
-    "fede.clock",
-    "fede.lock"
-  ]
+  "version": 1
 }

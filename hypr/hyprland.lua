@@ -27,14 +27,14 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
-hl.config({
-	windowrulev2 = {
-		"idleinhibit focus, class:^(firefox)$",
-		"idleinhibit focus, class:^(brave-browser)$",
-		"idleinhibit focus, class:^(brave)$",
-		"idleinhibit focus, class:^(mpv)$",
-	},
-})
+-- hl.config({
+-- 	windowrulev2 = {
+-- 		"idleinhibit focus, class:^(firefox)$",
+-- 		"idleinhibit focus, class:^(brave-browser)$",
+-- 		"idleinhibit focus, class:^(brave)$",
+-- 		"idleinhibit focus, class:^(mpv)$",
+-- 	},
+-- })
 -- Removes fullscreen animation/blackscreen
 hl.window_rule({ match = { class = "^(mpv)$" }, content = "none" })
 hl.window_rule({ match = { title = ".*mpv.*" }, content = "none" })
