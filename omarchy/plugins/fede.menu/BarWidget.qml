@@ -13,7 +13,7 @@ BarWidget {
     anchors.fill: parent
     bar: root.bar
     text: "\ue900"
-    fontFamily: "FuturaND-Medium"
+    fontFamily: "omarchy"
     horizontalMargin: 7.5
     onPressed: function(button) {
       if (!root.bar) return

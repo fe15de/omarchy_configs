@@ -43,7 +43,10 @@ Item {
 
   function ping() { return "ok" }
 
-  property string fontFamily: Style.font.menuFamily
+  property string fontFamily: "Futura ND"
+  // Glyph icons (Nerd Font PUA codepoints) must stay on the icon font — the
+  // menu text font (Futura ND) has no coverage for them.
+  readonly property string iconFontFamily: Style.font.family
   // JSONC menu definitions. The shell parses both at startup and merges
   // the user file on top of the defaults, so the keybind → IPC → visible
   // path doesn't have to shell out to bash + jq on every open.
@@ -1238,7 +1241,7 @@ Item {
                 visible: row.hasIcon && !row.isApp
                 text: row.icon
                 color: row.hasCursor ? root.selectedText : root.foreground
-                font.family: row.iconFont.length > 0 ? row.iconFont : root.fontFamily
+                font.family: row.iconFont.length > 0 ? row.iconFont : root.iconFontFamily
                 font.pixelSize: Style.font.iconLarge
                 width: Style.space(36)
                 horizontalAlignment: Text.AlignHCenter
@@ -1392,7 +1395,7 @@ Item {
               text: "󰈉"
               color: root.selectedText
               opacity: 0.8
-              font.family: root.fontFamily
+              font.family: root.iconFontFamily
               font.pixelSize: Style.font.displayLarge
               horizontalAlignment: Text.AlignHCenter
               width: Style.space(320)

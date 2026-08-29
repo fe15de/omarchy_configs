@@ -1,7 +1,10 @@
 -- Application bindings
 -- o.bind("SUPER + ALT + RETURN", "Tmux", 'uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)" tmux new')
 
--- o.bind("SUPER + RETURN", "Terminal", 'uwsm app -- $TERMINAL --dir="$(omarchy-cmd-terminal-cwd)"')
+-- Open the terminal at $HOME, not the focused terminal's directory (Omarchy's
+-- default passes --dir="$(omarchy-cmd-terminal-cwd)").
+hl.unbind("SUPER + RETURN")
+o.bind("SUPER + RETURN", "Terminal", "uwsm-app -- xdg-terminal-exec")
 -- o.bind("SUPER + SHIFT + F", "File manager", "uwsm app -- nautilus --new-window")
 o.bind("SUPER + B", "Browser", "omarchy-launch-browser")
 o.bind("SUPER + SHIFT + B", "Browser (private)", "omarchy-launch-browser --private")
