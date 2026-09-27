@@ -10,7 +10,7 @@
       "left": [
         {
           "exec": "~/.config/omarchy/bar/ram_usage.bash",
-          "fontSize": 11,
+          "fontSize": 13,
           "id": "ram",
           "interval": 30,
           "type": "command"
@@ -19,13 +19,13 @@
           "id": "omarchy.tray"
         },
         {
-          "id": "omarchy.agents"
+          "id": "fede.agents"
         },
         {
           "id": "omarchy.bluetooth"
         },
         {
-          "id": "omarchy.network"
+          "id": "fede.network"
         },
         {
           "id": "fede.audio"
@@ -46,9 +46,11 @@
         },
         {
           "id": "fede.clock",
+          "announceLeadMinutes": 15,
           "format": "dddd HH:mm",
           "hiddenCalendars": [],
-          "weekStartDay": "monday"
+          "showYearProgress": false,
+          "weekStartDay": "sunday"
         },
         {
           "id": "omarchy.keyboard-layout"
