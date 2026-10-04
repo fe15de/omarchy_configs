@@ -45,10 +45,10 @@
           "id": "omarchy.power"
         },
         {
-          "id": "fede.clock",
           "announceLeadMinutes": 15,
           "format": "dddd HH:mm",
           "hiddenCalendars": [],
+          "id": "fede.clock",
           "showYearProgress": false,
           "weekStartDay": "sunday"
         },
