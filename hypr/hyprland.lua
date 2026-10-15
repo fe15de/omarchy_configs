@@ -38,3 +38,4 @@ require("default.hypr.toggles")
 -- Removes fullscreen animation/blackscreen
 hl.window_rule({ match = { class = "^(mpv)$" }, content = "none" })
 hl.window_rule({ match = { title = ".*mpv.*" }, content = "none" })
+o.window("brave-browser|firefox|chromium|[cC]hrome", { opacity = "0.985 0.96" })
