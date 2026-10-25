@@ -7,11 +7,21 @@ hl.unbind("SUPER + RETURN")
 o.bind("SUPER + RETURN", "Terminal", "uwsm-app -- xdg-terminal-exec")
 -- o.bind("SUPER + SHIFT + F", "File manager", "uwsm app -- nautilus --new-window")
 o.bind("SUPER + B", "Browser", "omarchy-launch-browser")
+-- Omarchy's default binds SUPER + SHIFT + B to the normal browser; unbind it so
+-- only the private-window launch below runs (otherwise both fire).
+hl.unbind("SUPER + SHIFT + B")
 o.bind("SUPER + SHIFT + B", "Browser (private)", "omarchy-launch-browser --private")
+-- Omarchy's default binds SUPER + S to "Toggle scratchpad"; unbind it so
+-- only the Spotify launch below runs (otherwise both fire, and Spotify
+-- can end up stuck inside the scratchpad instead of a real workspace).
+hl.unbind("SUPER + S")
 o.bind("SUPER + S", "Music", "omarchy-launch-or-focus spotify")
 o.bind("SUPER + C", "Editor", "code")
 o.bind("SUPER + SHIFT + T", "Activity", "omarchy-launch-tui btop")
 o.bind("SUPER + D", "Docker", "omarchy-launch-tui lazydocker")
+-- Omarchy's default binds SUPER + SHIFT + M to Spotify; unbind it so only
+-- the WhatsApp launch below runs (otherwise both fire).
+hl.unbind("SUPER + SHIFT + M")
 o.bind("SUPER + SHIFT + M", "WhatsApp", 'omarchy-launch-or-focus-webapp WhatsApp "https://web.whatsapp.com/"')
 o.bind("SUPER + SHIFT + N", "Obsidian", 'omarchy-launch-or-focus obsidian "uwsm-app -- obsidian"')
 hl.unbind("SUPER + SHIFT + P")
